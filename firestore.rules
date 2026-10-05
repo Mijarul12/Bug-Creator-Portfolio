@@ -1,0 +1,191 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == 'mijarulkhkh@gmail.com' && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // --- Admin verification list ---
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // --- Profile ---
+    function isValidProfile(data) {
+      return data.keys().hasAll(['name', 'tagline', 'bio', 'email']) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+        data.tagline is string && data.tagline.size() <= 200 &&
+        data.bio is string && data.bio.size() <= 2000 &&
+        data.email is string && data.email.size() <= 120 &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 50)) &&
+        (!('location' in data) || (data.location is string && data.location.size() <= 100)) &&
+        (!('avatarUrl' in data) || (data.avatarUrl is string && data.avatarUrl.size() <= 500)) &&
+        (!('cvUrl' in data) || (data.cvUrl is string && data.cvUrl.size() <= 500));
+    }
+
+    match /profile/{profileId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(profileId) && isValidProfile(request.resource.data);
+      allow delete: if isAdmin() && isValidId(profileId);
+    }
+
+    // --- Projects ---
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'description', 'category', 'technologies', 'status']) &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 150 &&
+        data.description is string && data.description.size() <= 500 &&
+        data.category is string && data.category.size() <= 60 &&
+        data.technologies is string && data.technologies.size() <= 300 &&
+        data.status is string && data.status.size() <= 40 &&
+        (!('fullDescription' in data) || (data.fullDescription is string && data.fullDescription.size() <= 3000)) &&
+        (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 500)) &&
+        (!('demoUrl' in data) || (data.demoUrl is string && data.demoUrl.size() <= 500)) &&
+        (!('githubUrl' in data) || (data.githubUrl is string && data.githubUrl.size() <= 500)) &&
+        (!('features' in data) || (data.features is string && data.features.size() <= 2000)) &&
+        (!('problemStatement' in data) || (data.problemStatement is string && data.problemStatement.size() <= 1500)) &&
+        (!('solution' in data) || (data.solution is string && data.solution.size() <= 1500)) &&
+        (!('isPublished' in data) || (data.isPublished is bool)) &&
+        (!('displayOrder' in data) || (data.displayOrder is number));
+    }
+
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(projectId) && isValidProject(request.resource.data);
+      allow delete: if isAdmin() && isValidId(projectId);
+    }
+
+    // --- Skills ---
+    function isValidSkill(data) {
+      return data.keys().hasAll(['name', 'category', 'level']) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 80 &&
+        data.category is string && data.category.size() <= 60 &&
+        data.level is number && data.level >= 0 && data.level <= 100 &&
+        (!('icon' in data) || (data.icon is string && data.icon.size() <= 60)) &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 300)) &&
+        (!('displayOrder' in data) || (data.displayOrder is number));
+    }
+
+    match /skills/{skillId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(skillId) && isValidSkill(request.resource.data);
+      allow delete: if isAdmin() && isValidId(skillId);
+    }
+
+    // --- Services ---
+    function isValidService(data) {
+      return data.keys().hasAll(['title', 'description']) &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 120 &&
+        data.description is string && data.description.size() <= 1000 &&
+        (!('icon' in data) || (data.icon is string && data.icon.size() <= 60)) &&
+        (!('features' in data) || (data.features is string && data.features.size() <= 1500)) &&
+        (!('turnaround' in data) || (data.turnaround is string && data.turnaround.size() <= 60)) &&
+        (!('displayOrder' in data) || (data.displayOrder is number));
+    }
+
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(serviceId) && isValidService(request.resource.data);
+      allow delete: if isAdmin() && isValidId(serviceId);
+    }
+
+    // --- Contact Messages ---
+    function isValidMessage(data) {
+      return data.keys().hasAll(['fullName', 'email', 'message']) &&
+        data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 100 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 120 &&
+        data.message is string && data.message.size() > 0 && data.message.size() <= 2000 &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 50)) &&
+        (!('projectType' in data) || (data.projectType is string && data.projectType.size() <= 80)) &&
+        (!('budget' in data) || (data.budget is string && data.budget.size() <= 60)) &&
+        (!('status' in data) || (data.status is string && data.status.size() <= 30)) &&
+        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50));
+    }
+
+    match /messages/{messageId} {
+      allow read, delete: if isAdmin() && isValidId(messageId);
+      allow list: if isAdmin();
+      allow create: if isValidId(messageId) && isValidMessage(request.resource.data);
+      allow update: if isAdmin() && isValidId(messageId) && isValidMessage(request.resource.data);
+    }
+
+    // --- Project Requests ---
+    function isValidProjectRequest(data) {
+      return data.keys().hasAll(['clientName', 'email', 'projectType', 'projectDescription']) &&
+        data.clientName is string && data.clientName.size() > 0 && data.clientName.size() <= 100 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 120 &&
+        data.projectType is string && data.projectType.size() <= 80 &&
+        data.projectDescription is string && data.projectDescription.size() > 0 && data.projectDescription.size() <= 3000 &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 50)) &&
+        (!('requiredFeatures' in data) || (data.requiredFeatures is string && data.requiredFeatures.size() <= 2000)) &&
+        (!('budget' in data) || (data.budget is string && data.budget.size() <= 80)) &&
+        (!('deadline' in data) || (data.deadline is string && data.deadline.size() <= 80)) &&
+        (!('referenceUrl' in data) || (data.referenceUrl is string && data.referenceUrl.size() <= 500)) &&
+        (!('additionalMessage' in data) || (data.additionalMessage is string && data.additionalMessage.size() <= 1500)) &&
+        (!('status' in data) || (data.status is string && data.status.size() <= 30)) &&
+        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50)) &&
+        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50));
+    }
+
+    match /projectRequests/{requestId} {
+      allow read, delete: if isAdmin() && isValidId(requestId);
+      allow list: if isAdmin();
+      allow create: if isValidId(requestId) && isValidProjectRequest(request.resource.data);
+      allow update: if isAdmin() && isValidId(requestId) && isValidProjectRequest(request.resource.data);
+    }
+
+    // --- Social Links ---
+    function isValidSocialLink(data) {
+      return data.keys().hasAll(['platform', 'url']) &&
+        data.platform is string && data.platform.size() > 0 && data.platform.size() <= 60 &&
+        data.url is string && data.url.size() > 0 && data.url.size() <= 500 &&
+        (!('handle' in data) || (data.handle is string && data.handle.size() <= 100)) &&
+        (!('displayOrder' in data) || (data.displayOrder is number)) &&
+        (!('isPrimary' in data) || (data.isPrimary is bool));
+    }
+
+    match /socialLinks/{linkId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(linkId) && isValidSocialLink(request.resource.data);
+      allow delete: if isAdmin() && isValidId(linkId);
+    }
+
+    // --- Content Creator Showcase ---
+    function isValidContentItem(data) {
+      return data.keys().hasAll(['title', 'platform', 'url']) &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 180 &&
+        data.platform is string && data.platform.size() <= 40 &&
+        data.url is string && data.url.size() <= 500 &&
+        (!('videoId' in data) || (data.videoId is string && data.videoId.size() <= 100)) &&
+        (!('thumbnailUrl' in data) || (data.thumbnailUrl is string && data.thumbnailUrl.size() <= 500)) &&
+        (!('category' in data) || (data.category is string && data.category.size() <= 60)) &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 500)) &&
+        (!('displayOrder' in data) || (data.displayOrder is number));
+    }
+
+    match /contentItems/{contentId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(contentId) && isValidContentItem(request.resource.data);
+      allow delete: if isAdmin() && isValidId(contentId);
+    }
+  }
+}

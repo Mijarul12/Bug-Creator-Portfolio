@@ -1,0 +1,177 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "Developer portfolio profile information for Mijarul Rahaman (Bug Creator)",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "tagline": { "type": "string", "maxLength": 200 },
+        "bio": { "type": "string", "maxLength": 2000 },
+        "location": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "availableForHire": { "type": "boolean" },
+        "yearsExperience": { "type": "string", "maxLength": 20 },
+        "completedProjects": { "type": "string", "maxLength": 20 },
+        "happyClients": { "type": "string", "maxLength": 20 },
+        "avatarUrl": { "type": "string", "maxLength": 500 },
+        "cvUrl": { "type": "string", "maxLength": 500 },
+        "aboutStory": { "type": "string", "maxLength": 3000 }
+      },
+      "required": ["name", "tagline", "bio", "email"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Showcase portfolio project",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 500 },
+        "fullDescription": { "type": "string", "maxLength": 3000 },
+        "category": { "type": "string", "maxLength": 60 },
+        "technologies": { "type": "string", "maxLength": 300 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "demoUrl": { "type": "string", "maxLength": 500 },
+        "githubUrl": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "maxLength": 40 },
+        "features": { "type": "string", "maxLength": 2000 },
+        "problemStatement": { "type": "string", "maxLength": 1500 },
+        "solution": { "type": "string", "maxLength": 1500 },
+        "isPublished": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "description", "category", "technologies", "status"]
+    },
+    "Skill": {
+      "title": "Skill",
+      "description": "Developer skill with proficiency score and description",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 80 },
+        "category": { "type": "string", "maxLength": 60 },
+        "level": { "type": "number" },
+        "icon": { "type": "string", "maxLength": 60 },
+        "description": { "type": "string", "maxLength": 300 },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["name", "level", "category"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Service offered by Bug Creator / Mijarul Rahaman",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "icon": { "type": "string", "maxLength": 60 },
+        "features": { "type": "string", "maxLength": 1500 },
+        "turnaround": { "type": "string", "maxLength": 60 },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["title", "description"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Visitor contact message",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "projectType": { "type": "string", "maxLength": 80 },
+        "budget": { "type": "string", "maxLength": 60 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["fullName", "email", "message"]
+    },
+    "ProjectRequest": {
+      "title": "ProjectRequest",
+      "description": "Detailed project development request from client",
+      "type": "object",
+      "properties": {
+        "clientName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "projectType": { "type": "string", "maxLength": 80 },
+        "projectDescription": { "type": "string", "maxLength": 3000 },
+        "requiredFeatures": { "type": "string", "maxLength": 2000 },
+        "budget": { "type": "string", "maxLength": 80 },
+        "deadline": { "type": "string", "maxLength": 80 },
+        "referenceUrl": { "type": "string", "maxLength": 500 },
+        "additionalMessage": { "type": "string", "maxLength": 1500 },
+        "status": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["clientName", "email", "projectType", "projectDescription"]
+    },
+    "SocialLink": {
+      "title": "SocialLink",
+      "description": "Social media channel link",
+      "type": "object",
+      "properties": {
+        "platform": { "type": "string", "maxLength": 60 },
+        "url": { "type": "string", "maxLength": 500 },
+        "handle": { "type": "string", "maxLength": 100 },
+        "displayOrder": { "type": "number" },
+        "isPrimary": { "type": "boolean" }
+      },
+      "required": ["platform", "url"]
+    },
+    "ContentItem": {
+      "title": "ContentItem",
+      "description": "YouTube or Instagram video / content item showcase",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 180 },
+        "platform": { "type": "string", "maxLength": 40 },
+        "url": { "type": "string", "maxLength": 500 },
+        "videoId": { "type": "string", "maxLength": 100 },
+        "thumbnailUrl": { "type": "string", "maxLength": 500 },
+        "category": { "type": "string", "maxLength": 60 },
+        "description": { "type": "string", "maxLength": 500 },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["title", "platform", "url"]
+    }
+  },
+  "firestore": {
+    "/profile/{profileId}": {
+      "schema": { "$ref": "#/entities/Profile" },
+      "description": "Portfolio creator profile details"
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/Project" },
+      "description": "Developer portfolio projects"
+    },
+    "/skills/{skillId}": {
+      "schema": { "$ref": "#/entities/Skill" },
+      "description": "Technical skills list"
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/Service" },
+      "description": "Services offered"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Contact form submissions"
+    },
+    "/projectRequests/{requestId}": {
+      "schema": { "$ref": "#/entities/ProjectRequest" },
+      "description": "Client project proposal requests"
+    },
+    "/socialLinks/{linkId}": {
+      "schema": { "$ref": "#/entities/SocialLink" },
+      "description": "Social media links"
+    },
+    "/contentItems/{contentId}": {
+      "schema": { "$ref": "#/entities/ContentItem" },
+      "description": "Content creator videos and tutorials"
+    }
+  }
+}
